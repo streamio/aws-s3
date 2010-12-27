@@ -72,7 +72,7 @@ module AWS #:nodoc:
           Service.response = response
 
           Error::Response.new(response.response).error.raise if response.error?
-          if attempts > 0 and !current_host.math(".#{DEFAULT_HOST}")
+          if attempts > 0 and !current_host.match(".#{DEFAULT_HOST}")
             establish_connection!(:server => DEFAULT_HOST)
           end
           response
