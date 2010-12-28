@@ -43,6 +43,15 @@ module AWS
     #     end
     #   end
     #
+    # For ruby 1.9.2, use 'wb' instead of 'w', ie
+    #
+    #   open('song.mp3', 'wb') do |file|
+    #     S3Object.stream('song.mp3', 'jukebox') do |chunk|
+    #       file.write chunk
+    #     end
+    #   end
+
+    #
     # The data of the file, once download, is cached, so subsequent calls to <tt>value</tt> won't redownload the file unless you
     # tell the object to reload its <tt>value</tt>:
     #
