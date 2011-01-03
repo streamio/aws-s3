@@ -1,5 +1,4 @@
-This Fork is to provide support to European Buckets of Amazon S3, which changes concepts like the "Host" header (from s3.amazonaws.com to bucket_name.amazonaws.com)
-With this fork, you can connect to/create US Buckets as well as EU Buckets.
+This fork is to provide support to European, Asian and West Coast US Buckets of Amazon S3, which changes concepts like the "Host" header (from s3.amazonaws.com to bucket_name.amazonaws.com). With this fork, you can connect to/create US Buckets as well as EU Buckets. However, s3sh is still not usable for most datacenters.
 
 = AWS::S3
 
@@ -14,7 +13,7 @@ To get started you need to require 'aws/s3':
   irb(main):001:0> require 'aws/s3'
   # => true
 
-The AWS::S3 library ships with an interactive shell called <tt>s3sh</tt>. From within it, you have access to all the operations the library exposes from the command line.
+The AWS::S3 library ships with an interactive shell called <tt>s3sh</tt>. From within it, you have access to all the operations the library exposes from the command line, for the original datacenter; it will fail on newer S3 datacenters that use bucket-domains rather than bucket-paths.
 
   % s3sh
   >> Version
@@ -49,7 +48,9 @@ See more connection details at AWS::S3::Connection::Management::ClassMethods.
 == AWS::S3 Basics
 === The service, buckets and objects
 
-The three main concepts of S3 are the service, buckets and objects.
+The four main concepts of S3 are the datacenter, service, buckets and objects. The original datacenter modelled buckets as the first element of a path. More recent datacenters use the bucket name as the subdomain in the host part of the URL and the key is the path element of a URL. This results in many operations failing in s3sh for non-default datacenters, because the resource identifier is not correctly constructed.
+
+Additionally, some of the examples can be made to work, at least when using the API. For example, the S3Object#rename method can be made to work if "from" is composed of "#{bucket-name}/#{object-key}". Note that there is a slash between the bucket name and the key, but no initial slash; this is a resource identifier, not a path.
 
 ==== The service
 
@@ -181,10 +182,10 @@ Other functionality includes:
   S3Object.exists? 'headshot.jpg', 'photos'
 
   # Copying an object
-  S3Object.copy 'headshot.jpg', 'headshot2.jpg', 'photos'
+  S3Object.copy 'photos/headshot.jpg', 'headshot2.jpg', 'photos'
 
   # Renaming an object
-  S3Object.rename 'headshot.jpg', 'portrait.jpg', 'photos'
+  S3Object.rename 'photos/headshot.jpg', 'portrait.jpg', 'photos'
 
   # Deleting an object
   S3Object.delete 'headshot.jpg', 'photos'
@@ -201,10 +202,10 @@ You can change the content type as well if you like:
   song.content_type = 'application/pdf'
   song.store
 
-(Keep in mind that due to limitiations in S3's exposed API, the only way to change things like the content_type
+(Keep in mind that due to limitations in S3's exposed API, the only way to change things like the content_type
 is to PUT the object onto S3 again. In the case of large files, this will result in fully re-uploading the file.)
 
-A bevie of information about an object can be had using the <tt>about</tt> method:
+A bevy of information about an object can be had using the <tt>about</tt> method:
 
   pp song.about
   {"last-modified"    => "Sat, 28 Oct 2006 21:29:26 GMT",
@@ -335,7 +336,7 @@ and specifying the object's key without a special authenticated url:
 
  http://s3.amazonaws.com/marcel/kiss.jpg
 
-==== Building custum access policies
+==== Building custom access policies
 
 For both buckets and objects, you can use the <tt>acl</tt> method to see its access control policy:
 
@@ -537,7 +538,7 @@ You could use this information to redisplay the error in a way you see fit, or j
 ==== Accessing the last request's response
 
 Sometimes methods that make requests to the S3 servers return some object, like a Bucket or an S3Object.
-Othertimes they return just <tt>true</tt>. Other times they raise an exception that you may want to rescue. Despite all these
+Other times they return just <tt>true</tt>. Other times they raise an exception that you may want to rescue. Despite all these
 possible outcomes, every method that makes a request stores its response object for you in Service.response. You can always
 get to the last request's response via Service.response.
 
@@ -547,5 +548,3 @@ get to the last request's response via Service.response.
 
 This is also useful when an error exception is raised in the console which you weren't expecting. You can
 root around in the response to get more details of what might have gone wrong.
-
-
