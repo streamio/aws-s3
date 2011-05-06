@@ -144,8 +144,8 @@ module AWS
           (host && http.address.match(host)) ? http.address : host.nil? ? http.address : host.match(/amazonaws.com/) ? host : "#{host}.#{http.address}"
         end
 
-        def query_string_authentication(request, options = {})
-          Authentication::QueryString.new(request, access_key_id, secret_access_key, options)
+        def query_string_authentication(request, current_host, options = {})
+          Authentication::QueryString.new(request, access_key_id, secret_access_key, current_host, options)
         end
 
         def request_method(verb)
