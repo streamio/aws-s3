@@ -97,14 +97,8 @@ module AWS
         end
 
         # Returns the lines for the log. Each line is wrapped in a Log::Line.
-        if RUBY_VERSION >= '1.8.7'
-          def lines
-            log.value.lines.map {|line| Line.new(line)}
-          end
-        else
-          def lines
-            log.value.map {|line| Line.new(line)}
-          end
+        def lines
+          log.value.lines.map {|line| Line.new(line)}
         end
         memoized :lines
 

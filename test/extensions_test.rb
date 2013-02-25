@@ -98,49 +98,6 @@ class CoercibleStringTest < Test::Unit::TestCase
   end
 end
 
-class KerneltExtensionsTest < Test::Unit::TestCase
-  class Foo
-    def foo
-      __method__
-    end
-
-    def bar
-      foo
-    end
-
-    def baz
-      bar
-    end
-  end
-  
-  class Bar
-    def foo
-      calling_method
-    end
-    
-    def bar
-      calling_method
-    end
-    
-    def calling_method
-      __method__(1)
-    end
-  end
-    
-  def test___method___works_regardless_of_nesting
-    f = Foo.new
-    [:foo, :bar, :baz].each do |method|
-      assert_equal 'foo', f.send(method)
-    end
-  end
-  
-  def test___method___depth
-    b = Bar.new
-    assert_equal 'foo', b.foo
-    assert_equal 'bar', b.bar
-  end
-end if RUBY_VERSION <= '1.8.7'
-
 class ModuleExtensionsTest < Test::Unit::TestCase
   class Foo
     def foo(reload = false)
