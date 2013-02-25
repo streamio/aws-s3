@@ -119,25 +119,6 @@ module Kernel
     end
     instance_variable_set(storage, yield)
   end
-
-  def require_library_or_gem(library, gem_name = nil)
-    gem(gem_name || library, '>=0') 
-    require library
-  rescue LoadError => library_not_installed
-    begin
-      require 'rubygems'
-      require library
-    rescue LoadError
-      raise library_not_installed
-    end
-  end
-end
-
-class Object
-  def returning(value)
-    yield(value)
-    value
-  end
 end
 
 class Module

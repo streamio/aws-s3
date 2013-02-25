@@ -3,7 +3,7 @@ require 'uri'
 $:.unshift File.dirname(__FILE__) + '/../../lib'
 require 'aws/s3'
 begin
-  require_library_or_gem 'breakpoint'
+  require 'breakpoint'
 rescue LoadError
 end
 

@@ -9,8 +9,8 @@ require 'open-uri'
 
 $:.unshift(File.dirname(__FILE__))
 require 's3/extensions'
-require_library_or_gem 'builder' unless defined? Builder
-require_library_or_gem 'mime/types', 'mime-types' unless defined? MIME::Types
+require 'builder'
+require 'mime/types'
 
 require 's3/base'
 require 's3/version'
@@ -42,18 +42,19 @@ AWS::S3::S3Object.class_eval do
   include AWS::S3::BitTorrent
 end
 
-require_library_or_gem 'xmlsimple', 'xml-simple' unless defined? XmlSimple
+require 'xmlsimple'
+
 # If libxml is installed, we use the FasterXmlSimple library, that provides most of the functionality of XmlSimple
 # except it uses the xml/libxml library for xml parsing (rather than REXML). If libxml isn't installed, we just fall back on
 # XmlSimple.
 AWS::S3::Parsing.parser =
   begin
-    require_library_or_gem 'xml/libxml'
+    require 'xml/libxml'
     # Older version of libxml aren't stable (bus error when requesting attributes that don't exist) so we
     # have to use a version greater than '0.3.8.2'.
     raise LoadError unless XML::Parser::VERSION > '0.3.8.2'
     $:.push(File.join(File.dirname(__FILE__), '..', '..', 'support', 'faster-xml-simple', 'lib'))
-    require_library_or_gem 'faster_xml_simple' 
+    require 'faster_xml_simple' 
     FasterXmlSimple
   rescue LoadError
     XmlSimple
